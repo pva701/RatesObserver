@@ -1,24 +1,19 @@
-#include <iostream>
 #include <QtGui>
 #include "parserleonbets.h"
-using namespace std;
+#include <cstdio>
 
+int main(int argc, char * argv[]) {
+    QApplication a(argc, argv);
 
+    int t;
+    if (argc != 2) {
+        qDebug() << "warning: you don't input a time!\n";
+        t = 2e9;
+    } else
+        t = QString(argv[1]).toInt();
 
- int main(int argc, char * argv[])
- {
-     //argc = 2;
-     //argv[1] = "https://ru.leonbets.net/";
-     if (argc != 2) {
-         std::cout << "input url, please!\n";
-         return 0;
-     }
-
-     QUrl url = QUrl::fromUserInput(QString::fromLatin1(argv[1]));
-     QApplication a(argc, argv);
-
-     ParserLeonbets parser;
-     parser.setUrl(url);
-     parser.parse();
-     return a.exec();
- }
+    ParserLeonbets parser;
+    parser.setTime(t);
+    parser.parse();
+    return a.exec();
+}
