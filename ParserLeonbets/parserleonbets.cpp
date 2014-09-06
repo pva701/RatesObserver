@@ -4,8 +4,6 @@
 #include <QDateTime>
 #include <QFile>
 
-#include "parseleague.h"
-
 //namespace LineExtracters {
 int LineExtracters::extractTime(const QWebElement& element) {
     QString s = element.firstChild().firstChild().toPlainText();
@@ -137,7 +135,7 @@ void ParserLeonbets::slotLoadMainPageFinished(bool status) {
 
     if (links.back().second == "")
         links.pop_back();
-    qDebug() << "total leags = " << links.size();
+    qDebug() << "\ntotal leags = " << links.size();
     collect.setNumberOfLeagues(links.size());
 
     league = new QWebPage();
@@ -152,7 +150,7 @@ void ParserLeonbets::slotLoadLeaguePageFinished(bool status) {
         qDebug() << "error load league page" << endl;
         return;
     }
-    cout << "succ leag " << ++numberOfLink << endl;
+    cout << "succ leag " << numberOfLink + 1 << endl;
     collect.addLeague(links[numberOfLink].first);
     examineChildElements(collect.size() - 1, league->mainFrame()->documentElement());
 
@@ -161,7 +159,7 @@ void ParserLeonbets::slotLoadLeaguePageFinished(bool status) {
         QTextStream(&file) << collect.toXml();
         file.close();
     }
-
+    ++numberOfLink;
     if (numberOfLink < links.size())
         league->mainFrame()->load(links[numberOfLink].second);
 }
