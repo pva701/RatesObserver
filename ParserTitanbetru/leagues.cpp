@@ -33,10 +33,6 @@ QString Leagues::toXml() {
     for (int i = 0; i < leagues.size(); ++i) {
         QDomElement leag = doc.createElement("league");
 
-        QDomAttr domAttrId = doc.createAttribute("id");
-        domAttrId.setValue(QString().setNum(i));
-        leag.setAttributeNode(domAttrId);
-
         QDomAttr domAttrName = doc.createAttribute("name");
         domAttrName.setValue(leagues[i]);
         leag.setAttributeNode(domAttrName);
@@ -44,13 +40,9 @@ QString Leagues::toXml() {
         domEl.appendChild(leag);
         for (int j = 0; j < lines[i].size(); ++j) {
             QDomElement line = doc.createElement("line");
-            QDomAttr domAttr = doc.createAttribute("id");
-            domAttr.setValue(QString().setNum(j));
-            line.setAttributeNode(domAttr);
             leag.appendChild(line);
             lines[i][j].addSelfLikeSon(doc, line);
         }
     }
     return doc.toString();
 }
-//https://vk.com/audios-5316256
