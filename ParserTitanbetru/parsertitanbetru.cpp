@@ -11,6 +11,7 @@ void ParserTitanbetru::parse() {
     QUrl url(QUrl::fromUserInput(QString::fromLatin1(URL)));
     mainPage = new QWebPage();
     lockAttributs(*mainPage);
+    startParse = clock();
     connect(mainPage, SIGNAL(loadFinished(bool)), this, SLOT(slotLoadMainPageFinished(bool)));
     mainPage->mainFrame()->load(url);
 }
@@ -56,6 +57,7 @@ void ParserTitanbetru::slotLoadMainPageFinished(bool status) {
     lockAttributs(*league);
     connect(league, SIGNAL(loadFinished(bool)), this, SLOT(slotLoadLeaguePageFinishedIterate(bool)));
     qDebug() << "total leagues = " << links.size();
+    collect.setNumberOfLeagues(links.size());
     league->mainFrame()->load(getLink());
 }
 
@@ -122,6 +124,10 @@ void ParserTitanbetru::slotLoadLeaguePageFinishedIterate(bool status) {
 
     if (numberOfLink < links.size())
         league->mainFrame()->load(getLink());
+    else {
+        qDebug() << (clock() - startParse) / 100000.0 << endl;
+        exit(0);
+    }
 }
 
 void ParserTitanbetru::extractLinks(const QWebElement& v, QVector <QString>& ids) {

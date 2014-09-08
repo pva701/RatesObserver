@@ -162,4 +162,8 @@ void ParserLeonbets::slotLoadLeaguePageFinished(bool status) {
     ++numberOfLink;
     if (numberOfLink < links.size())
         league->mainFrame()->load(links[numberOfLink].second);
+    else {
+        cout << "time of work = " << (clock() - startParse) / 100000.0 << endl;
+        exit(0);
+    }
 }
