@@ -40,11 +40,9 @@ QString Leagues::toXml() {
         domEl.appendChild(leag);
         for (int j = 0; j < lines[i].size(); ++j) {
             QDomElement line = doc.createElement("line");
-
             leag.appendChild(line);
             lines[i][j].addSelfLikeSon(doc, line);
         }
     }
     return doc.toString();
 }
-//https://vk.com/audios-5316256
