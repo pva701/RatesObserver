@@ -13,7 +13,7 @@ int LineExtracters::extractTime(const QWebElement& element) {
     return s.mid(l + 1, r - l - 1).toLongLong() / 1000;
 }
 
-QString LineExtracters::extractComands(const QWebElement& element) {
+QString LineExtracters::extractTeams(const QWebElement& element) {
     return element.firstChild().nextSibling().firstChild().firstChild().toPlainText();
 }
 
@@ -26,17 +26,17 @@ void LineExtracters::trim(QString& comand) {
     comand.remove(i + 1, comand.size() - i - 1);
 }
 
-QString LineExtracters::extractFirstComand(const QWebElement& element) {
-    QString s = extractComands(element);
-    int pos = s.indexOf("-");
+QString LineExtracters::extractFirstTeam(const QWebElement& element) {
+    QString s = extractTeams(element);
+    int pos = s.indexOf(" - ");
     QString first = s.mid(0, pos);
     trim(first);
     return first;
 }
 
-QString LineExtracters::extractSecondComand(const QWebElement& element) {
-    QString s = extractComands(element);
-    int pos = s.indexOf("-");
+QString LineExtracters::extractSecondTeam(const QWebElement& element) {
+    QString s = extractTeams(element);
+    int pos = s.indexOf(" - ");
     QString second = s.mid(pos + 1, s.size() - pos - 1);
     trim(second);
     return second;
@@ -67,7 +67,7 @@ void ParserLeonbets::examineChildElements(int id, const QWebElement &parentEleme
             if (element.hasClass("row1") || element.hasClass("row2")) {
                 int t = extractTime(element);
                 //if (t <= timeMatch)
-                collect.addLine(t, extractFirstComand(element), extractSecondComand(element),
+                collect.addLine(t, extractFirstTeam(element), extractSecondTeam(element),
                                 extractWin1(element), extractDraw(element), extractWin2(element));
             }
         }

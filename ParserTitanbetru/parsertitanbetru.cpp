@@ -94,7 +94,7 @@ void ParserTitanbetru::extractLine(const QWebElement& v) {
 
 void ParserTitanbetru::parseLeagues(const QWebElement& v) {
     if (v.tagName().toLower() == "span" && v.attribute("data-ref_key").toLower() == "type")
-        collect.addLeague(v.parent().toPlainText());
+        collect.addLeague(v.parent().toPlainText().remove(0, 2));
 
     if (v.tagName().toLower() == "tr") {
         extractLine(v);

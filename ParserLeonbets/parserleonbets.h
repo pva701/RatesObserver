@@ -13,10 +13,10 @@ using namespace std;
 
 namespace LineExtracters {
     int extractTime(const QWebElement& element);
-    QString extractComands(const QWebElement& element);
+    QString extractTeams(const QWebElement& element);
     void trim(QString& comand);
-    QString extractFirstComand(const QWebElement& element);
-    QString extractSecondComand(const QWebElement& element);
+    QString extractFirstTeam(const QWebElement& element);
+    QString extractSecondTeam(const QWebElement& element);
     double extractWin1(const QWebElement& element);
     double extractDraw(const QWebElement &element);
     double extractWin2(const QWebElement &element);
