@@ -37,6 +37,10 @@ QString Leagues::toXml() {
         domAttrName.setValue(leagues[i]);
         leag.setAttributeNode(domAttrName);
 
+        QDomAttr id = doc.createAttribute("id");
+        id.setValue(QString().setNum(i));
+        leag.setAttributeNode(id);
+
         domEl.appendChild(leag);
         for (int j = 0; j < lines[i].size(); ++j) {
             QDomElement line = doc.createElement("line");

@@ -125,7 +125,7 @@ void ParserTitanbetru::slotLoadLeaguePageFinishedIterate(bool status) {
     if (numberOfLink < links.size())
         league->mainFrame()->load(getLink());
     else {
-        qDebug() << (clock() - startParse) / 100000.0 << endl;
+        qDebug() << (clock() - startParse) / 100000.0 << " sec.";
         exit(0);
     }
 }
