@@ -135,7 +135,6 @@ void ParserLeonbets::slotLoadMainPageFinished(bool status) {
     cout << endl;
     //qDebug() << mainPage->mainFrame()->toHtml();
     findLeagueLinks(mainPage->mainFrame()->documentElement());
-    cout << "links size = " << links.size() << endl;
     if (links.back().second == "")
         links.pop_back();
     qDebug() << "total leags = " << links.size();
