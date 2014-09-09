@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import scrapy
 import re
 
@@ -22,17 +24,20 @@ class LineSpider(scrapy.Spider):
         for tr in response.xpath('/html/body/div[1]/div[8]/div[2]/div[3]/div[2]/div[2]/div/div/table/tbody//tr'):
             item = LineItem()
             try:
-                time = tr.xpath('td[1]/span/@id').extract()[0]
+                timestamp = tr.xpath('td[1]/span/@id').extract()[0]
             except:
-                time = '0'
-            line_url = tr.xpath('td[3]//a/@href').extract()[0] or None
-            teams = tr.xpath('td[3]/a/span/text()').extract()[0] or None
-            win1 = tr.xpath('td[5]/div/div[1]/text()').extract()[0] or None
-            draw = tr.xpath('td[6]/div/div[1]/text()').extract()[0] or None
-            win2 = tr.xpath('td[7]/div/div[1]/text()').extract()[0] or None
-            item['time'] = time
-            item['href'] = line_url
-            item['teams'] = teams
+                timestamp = '0'
+            href = tr.xpath('td[3]//a/@href').extract()[0]
+            teams = tr.xpath('td[3]/a/span/text()').extract()[0]
+            win1 = tr.xpath('td[5]/div/div[1]/text()').extract()[0]
+            draw = tr.xpath('td[6]/div/div[1]/text()').extract()[0]
+            win2 = tr.xpath('td[7]/div/div[1]/text()').extract()[0]
+
+            item['timestamp'] = timestamp
+            item['href'] = href
+            t = [x.strip() for x in teams.split(u'₋')]
+            item['team1'] = t[0] or None
+            item['team2'] = t[1] or None
             item['win1'] = win1
             item['draw'] = draw
             item['win2'] = win2

@@ -5,7 +5,7 @@ import scrapy
 
 class LineItem(scrapy.Item):
     title = scrapy.Field()
-    time = scrapy.Field()
+    timestamp = scrapy.Field()
     href = scrapy.Field()
     team1 = scrapy.Field()
     team2 = scrapy.Field()
