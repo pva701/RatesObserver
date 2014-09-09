@@ -37,7 +37,7 @@ QString LineExtracters::extractFirstTeam(const QWebElement& element) {
 QString LineExtracters::extractSecondTeam(const QWebElement& element) {
     QString s = extractTeams(element);
     int pos = s.indexOf(" - ");
-    QString second = s.mid(pos + 1, s.size() - pos - 1);
+    QString second = s.mid(pos + 3, s.size() - pos - 1);
     trim(second);
     return second;
 }
