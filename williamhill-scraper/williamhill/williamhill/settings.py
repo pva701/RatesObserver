@@ -12,4 +12,4 @@ DOWNLOADER_MIDDLEWARES = {
     'williamhill.rotate_useragent.RotateUserAgentMiddleware': 400
 }
 
-RETRY_TIMES = 4
+# RETRY_TIMES = 4

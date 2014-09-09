@@ -4,9 +4,8 @@ import re
 from williamhill.items import LineItem
 
 
-class LeagueSpider(scrapy.Spider):
+class LineSpider(scrapy.Spider):
     name = "leagues"
-    download_delay = 2
     allowed_domains = ['sports.williamhill.com']
     start_urls = [
         'http://sports.williamhill.com/bet/ru/betting/y/5/et/%D0%A4%D1%83%D1%82%D0%B1%D0%BE%D0%BB.html',
