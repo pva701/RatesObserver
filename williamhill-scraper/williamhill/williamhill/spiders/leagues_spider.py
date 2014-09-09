@@ -22,20 +22,18 @@ class LineSpider(scrapy.Spider):
         for tr in response.xpath('/html/body/div[1]/div[8]/div[2]/div[3]/div[2]/div[2]/div/div/table/tbody//tr'):
             item = LineItem()
             try:
-                timestamp = tr.xpath('td[1]/span/@id').extract()[0]
-                timestamp = re.findall('tzTime:br:(\d+)', timestamp)[0] or '0'
+                time = tr.xpath('td[1]/span/@id').extract()[0]
             except:
-                timestamp = '0'
-
-            line_url = tr.xpath('td[3]//a/@href').extract()[0]
-            teams = tr.xpath('td[3]/a/span/text()').extract()[0]
-            win1 = tr.xpath('td[5]/div/div[1]/text()').extract()[0]
-            draw = tr.xpath('td[6]/div/div[1]/text()').extract()[0]
-            win2 = tr.xpath('td[7]/div/div[1]/text()').extract()[0]
-            item['timestamp'] = timestamp.strip()
-            item['href'] = line_url.strip()
-            item['teams'] = teams.strip()
-            item['win1'] = win1.strip()
-            item['draw'] = draw.strip()
-            item['win2'] = win2.strip()
+                time = '0'
+            line_url = tr.xpath('td[3]//a/@href').extract()[0] or None
+            teams = tr.xpath('td[3]/a/span/text()').extract()[0] or None
+            win1 = tr.xpath('td[5]/div/div[1]/text()').extract()[0] or None
+            draw = tr.xpath('td[6]/div/div[1]/text()').extract()[0] or None
+            win2 = tr.xpath('td[7]/div/div[1]/text()').extract()[0] or None
+            item['time'] = time
+            item['href'] = line_url
+            item['teams'] = teams
+            item['win1'] = win1
+            item['draw'] = draw
+            item['win2'] = win2
             yield item
