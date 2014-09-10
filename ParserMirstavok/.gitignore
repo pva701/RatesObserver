@@ -1,0 +1,8 @@
+<<<<<<< HEAD
+*.class
+*.xml
+.idea
+=======
+mirstavok.xml
+out/
+>>>>>>> 1afe752ac85d886947361d76be1ff89c2f526dfc
