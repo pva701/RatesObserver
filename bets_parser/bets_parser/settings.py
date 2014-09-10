@@ -22,7 +22,7 @@ TOR_IP = '127.0.0.1'
 TOR_PORT = 9051
 http_proxy = 'http://127.0.0.1:8123'
 
-LOG_LEVEL = 'DEBUG'
+LOG_LEVEL = 'INFO'
 
 UA = [
     "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24",

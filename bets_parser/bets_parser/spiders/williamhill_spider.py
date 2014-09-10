@@ -16,9 +16,6 @@ class WilliamhillSpider(scrapy.Spider):
 
 
     def parse(self, response):
-        #for sel in response.xpath('/html/body/div[1]/div[8]/div[2]/div[3]/ul//a'):
-        #    href = sel.xpath('@href').extract()[0]
-        #    yield scrapy.Request(href, callback=self.parse_league)
         for li in response.xpath('/html/body/div[1]/div[8]/div[2]/div[3]/ul/*'):
             title = li.xpath('h3/text()').extract()
             if not title:
