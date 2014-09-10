@@ -5,6 +5,7 @@
 #include <QWebFrame>
 #include <QWebPage>
 #include <QUrl>
+#include <QWebView>
 #include "leagues.h"
 
 #include <iostream>
@@ -12,21 +13,20 @@ using namespace std;
 
 namespace LineExtracters {
     int extractTime(const QWebElement& element);
-    QString extractComands(const QWebElement& element);
+    QString extractTeams(const QWebElement& element);
     void trim(QString& comand);
-    QString extractFirstComand(const QWebElement& element);
-    QString extractSecondComand(const QWebElement& element);
+    QString extractFirstTeam(const QWebElement& element);
+    QString extractSecondTeam(const QWebElement& element);
     double extractWin1(const QWebElement& element);
     double extractDraw(const QWebElement &element);
     double extractWin2(const QWebElement &element);
 }
 
-
 class ParserLeonbets:public QObject
 {
     Q_OBJECT
 
-    QWebPage mainPage;
+    QWebPage *mainPage;
     void examineChildElements(int id, const QWebElement &parentElement);
     void findLeagueLinks(const QWebElement &parentElement);
     void lockAttributs(QWebPage& page);
@@ -42,8 +42,6 @@ public:
     ParserLeonbets();
     void parse();
     void setTime(int t);
-signals:
-    void loadFinishedMainPage(bool);
 private slots:
     void slotLoadMainPageFinished(bool status);
     void printProgress(int percent);

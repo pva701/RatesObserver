@@ -25,6 +25,7 @@ class ParserTitanbetru: public QObject
     QString format(QString m);
     int getGMT();
     int gmt;
+    int startParse;
 public:
     ParserTitanbetru();
     void parse();

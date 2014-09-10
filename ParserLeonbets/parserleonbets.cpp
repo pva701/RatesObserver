@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QDateTime>
 #include <QFile>
+#include <QTimer>
 
 //namespace LineExtracters {
 int LineExtracters::extractTime(const QWebElement& element) {
@@ -12,7 +13,7 @@ int LineExtracters::extractTime(const QWebElement& element) {
     return s.mid(l + 1, r - l - 1).toLongLong() / 1000;
 }
 
-QString LineExtracters::extractComands(const QWebElement& element) {
+QString LineExtracters::extractTeams(const QWebElement& element) {
     return element.firstChild().nextSibling().firstChild().firstChild().toPlainText();
 }
 
@@ -25,18 +26,18 @@ void LineExtracters::trim(QString& comand) {
     comand.remove(i + 1, comand.size() - i - 1);
 }
 
-QString LineExtracters::extractFirstComand(const QWebElement& element) {
-    QString s = extractComands(element);
-    int pos = s.indexOf("-");
+QString LineExtracters::extractFirstTeam(const QWebElement& element) {
+    QString s = extractTeams(element);
+    int pos = s.indexOf(" - ");
     QString first = s.mid(0, pos);
     trim(first);
     return first;
 }
 
-QString LineExtracters::extractSecondComand(const QWebElement& element) {
-    QString s = extractComands(element);
-    int pos = s.indexOf("-");
-    QString second = s.mid(pos + 1, s.size() - pos - 1);
+QString LineExtracters::extractSecondTeam(const QWebElement& element) {
+    QString s = extractTeams(element);
+    int pos = s.indexOf(" - ");
+    QString second = s.mid(pos + 3, s.size() - pos - 1);
     trim(second);
     return second;
 }
@@ -55,9 +56,7 @@ double LineExtracters::extractWin2(const QWebElement &element) {
 using namespace LineExtracters;
 
 ParserLeonbets::ParserLeonbets():
-    url(QUrl::fromUserInput(QString::fromLatin1("https://ru.leonbets.net"))), timeMatch(2e9) {
-    connect(&mainPage, SIGNAL(loadFinished(bool)), this, SLOT(slotLoadMainPageFinished(bool)), Qt::QueuedConnection);
-    connect(&mainPage, SIGNAL(loadProgress(int)), this, SLOT(printProgress(int)));
+    url(QUrl::fromUserInput(QString::fromLatin1("ru.leonbets.net"))), timeMatch(2e9) {
     loadedPercent = 0;
 }
 
@@ -67,9 +66,9 @@ void ParserLeonbets::examineChildElements(int id, const QWebElement &parentEleme
         if (element.tagName().toLower() == "tr") {
             if (element.hasClass("row1") || element.hasClass("row2")) {
                 int t = extractTime(element);
-                if (t <= timeMatch)
-                    collect.addLine(t, extractFirstComand(element), extractSecondComand(element),
-                                    extractWin1(element), extractDraw(element), extractWin2(element));
+                //if (t <= timeMatch)
+                collect.addLine(t, extractFirstTeam(element), extractSecondTeam(element),
+                                extractWin1(element), extractDraw(element), extractWin2(element));
             }
         }
         examineChildElements(id, element);
@@ -81,6 +80,7 @@ void ParserLeonbets::findLeagueLinks(const QWebElement &parentElement) {
     if (links.size())
         return;
     QWebElement element = parentElement.firstChild();
+    //qDebug() << parentElement.tagName() << " " << parentElement.isNull();
     while (!element.isNull()) {
         if (element.tagName().toLower() == "div" && element.attribute("id") == "lg1") {
             QWebElement div = element.firstChild().firstChild();
@@ -111,12 +111,14 @@ void ParserLeonbets::setTime(int t) {
 
 void ParserLeonbets::parse() {
     startParse = clock();
-    lockAttributs(mainPage);
-    mainPage.mainFrame()->load(url);
+    mainPage = new QWebPage();
+    connect(mainPage, SIGNAL(loadFinished(bool)), this, SLOT(slotLoadMainPageFinished(bool)));
+    connect(mainPage, SIGNAL(loadProgress(int)), this, SLOT(printProgress(int)));
+    lockAttributs(*mainPage);
+    mainPage->mainFrame()->load(url);
 }
 
-void ParserLeonbets::printProgress(int percent)
-{
+void ParserLeonbets::printProgress(int percent) {
     if (loadedPercent >= percent)
         return;
 
@@ -126,16 +128,16 @@ void ParserLeonbets::printProgress(int percent)
 }
 
 void ParserLeonbets::slotLoadMainPageFinished(bool status) {
-    emit loadFinishedMainPage(status);
     if (!status) {
         cout << "\nerror load main page" << endl;
         return;
     }
-    findLeagueLinks(mainPage.mainFrame()->documentElement());
-
+    cout << endl;
+    //qDebug() << mainPage->mainFrame()->toHtml();
+    findLeagueLinks(mainPage->mainFrame()->documentElement());
     if (links.back().second == "")
         links.pop_back();
-    qDebug() << "\ntotal leags = " << links.size();
+    qDebug() << "total leags = " << links.size();
     collect.setNumberOfLeagues(links.size());
 
     league = new QWebPage();
@@ -162,4 +164,8 @@ void ParserLeonbets::slotLoadLeaguePageFinished(bool status) {
     ++numberOfLink;
     if (numberOfLink < links.size())
         league->mainFrame()->load(links[numberOfLink].second);
+    else {
+        cout << "time of work = " << (clock() - startParse) / 100000.0 << " sec.\n";
+        exit(0);
+    }
 }
