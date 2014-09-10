@@ -3,11 +3,13 @@
 import scrapy
 
 
-class LineItem(scrapy.Item):
+class WilliamhillItem(scrapy.Item):
+    league = scrapy.Field()
     title = scrapy.Field()
     timestamp = scrapy.Field()
     href = scrapy.Field()
-    teams = scrapy.Field()
+    team1 = scrapy.Field()
+    team2 = scrapy.Field()
     win1 = scrapy.Field()
     draw = scrapy.Field()
     win2 = scrapy.Field()
