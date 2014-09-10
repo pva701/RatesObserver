@@ -3,7 +3,8 @@
 import scrapy
 
 
-class LineItem(scrapy.Item):
+class WilliamhillItem(scrapy.Item):
+    league = scrapy.Field()
     title = scrapy.Field()
     timestamp = scrapy.Field()
     href = scrapy.Field()

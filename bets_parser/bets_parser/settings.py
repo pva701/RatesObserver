@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 
 
-BOT_NAME = 'williamhill'
+BOT_NAME = 'bets_parser'
 
-SPIDER_MODULES = ['williamhill.spiders']
-NEWSPIDER_MODULE = 'williamhill.spiders'
+SPIDER_MODULES = ['bets_parser.spiders']
+NEWSPIDER_MODULE = 'bets_parser.spiders'
 
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
-    'williamhill.middlewares.RandomUserAgentMiddleware': 400,
-    # 'williamhill.middlewares.ProxyMiddleware': 410,
-    # 'williamhill.middlewares.RetryChangeProxyMiddleware': 600,
+    'bets_parser.middlewares.RandomUserAgentMiddleware': 400,
+    # 'bets_parser.middlewares.ProxyMiddleware': 410,
+    # 'bets_parser.middlewares.RetryChangeProxyMiddleware': 600,
 }
 
 ITEM_PIPELINES = {
-    'williamhill.pipelines.LinePipeline': 300,
+    'bets_parser.pipelines.WilliamhillPipeline': 300,
 }
 
 
@@ -22,7 +22,7 @@ TOR_IP = '127.0.0.1'
 TOR_PORT = 9051
 http_proxy = 'http://127.0.0.1:8123'
 
-LOG_LEVEL = 'INFO'
+LOG_LEVEL = 'DEBUG'
 
 UA = [
     "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24",
