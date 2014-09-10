@@ -65,7 +65,7 @@ void ParserLeonbets::examineChildElements(int id, const QWebElement &parentEleme
     while (!element.isNull()) {
         if (element.tagName().toLower() == "tr") {
             if (element.hasClass("row1") || element.hasClass("row2")) {
-                int t = extractTime(element);
+                int t = extractTime(element) + 4 * 3600;
                 //if (t <= timeMatch)
                 collect.addLine(t, extractFirstTeam(element), extractSecondTeam(element),
                                 extractWin1(element), extractDraw(element), extractWin2(element));

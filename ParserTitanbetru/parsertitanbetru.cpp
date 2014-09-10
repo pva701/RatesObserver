@@ -50,6 +50,7 @@ void ParserTitanbetru::slotLoadMainPageFinished(bool status) {
     }
     qDebug() << "success load";
     gmt = getGMT();
+    qDebug() << "GMT = " << gmt;
 
     QWebElement list = findByText(mainPage->mainFrame()->documentElement(), trUtf8("Футбол")).parent().nextSibling();
     extractLinks(list, links);
@@ -87,8 +88,8 @@ void ParserTitanbetru::extractLine(const QWebElement& v) {
 
     QDateTime d = QDateTime::fromString(time + " " + format(date) + " " +
                                       QString().setNum(QDateTime::currentDateTime().date().year()), "hh:mm dd MMMM yyyy");
-    d = d.addSecs((4 - gmt) * 3600);
-    int t = d.toTime_t();
+    //d = d.addSecs((4 - gmt) * 3600);
+    int t = d.toTime_t() + 7 * 3600;
     collect.addLine(t, team1, team2, win1, draw, win2);
 }
 
