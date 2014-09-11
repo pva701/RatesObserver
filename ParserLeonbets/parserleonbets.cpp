@@ -1,77 +1,32 @@
 #include "parserleonbets.h"
 
+#include <QObject>
 #include <QDebug>
 #include <QDateTime>
 #include <QFile>
 #include <QTimer>
+#include "leagues.h"
 
 //namespace LineExtracters {
-int LineExtracters::extractTime(const QWebElement& element) {
-    QString s = element.firstChild().firstChild().toPlainText();
-    int l = s.indexOf("(");
-    int r = s.indexOf(")");
-    return s.mid(l + 1, r - l - 1).toLongLong() / 1000;
-}
-
-QString LineExtracters::extractTeams(const QWebElement& element) {
-    return element.firstChild().nextSibling().firstChild().firstChild().toPlainText();
-}
-
-void LineExtracters::trim(QString& comand) {
-    int i = 0;
-    while (comand[i] == ' ') ++i;
-    comand.remove(0, i);
-    i = comand.size() - 1;
-    while (comand[i] == ' ') --i;
-    comand.remove(i + 1, comand.size() - i - 1);
-}
-
-QString LineExtracters::extractFirstTeam(const QWebElement& element) {
-    QString s = extractTeams(element);
-    int pos = s.indexOf(" - ");
-    QString first = s.mid(0, pos);
-    trim(first);
-    return first;
-}
-
-QString LineExtracters::extractSecondTeam(const QWebElement& element) {
-    QString s = extractTeams(element);
-    int pos = s.indexOf(" - ");
-    QString second = s.mid(pos + 3, s.size() - pos - 1);
-    trim(second);
-    return second;
-}
-
-double LineExtracters::extractWin1(const QWebElement& element) {
-    return element.firstChild().nextSibling().nextSibling().firstChild().firstChild().toPlainText().toDouble();
-}
-
-double LineExtracters::extractDraw(const QWebElement &element) {
-    return element.firstChild().nextSibling().nextSibling().nextSibling().firstChild().firstChild().toPlainText().toDouble();
-}
-
-double LineExtracters::extractWin2(const QWebElement &element) {
-    return element.firstChild().nextSibling().nextSibling().nextSibling().nextSibling().firstChild().firstChild().toPlainText().toDouble();
-}
-using namespace LineExtracters;
 
 ParserLeonbets::ParserLeonbets():
     url(QUrl::fromUserInput(QString::fromLatin1("ru.leonbets.net"))), timeMatch(2e9) {
     loadedPercent = 0;
 }
 
-void ParserLeonbets::examineChildElements(int id, const QWebElement &parentElement) {
-    QWebElement element = parentElement.firstChild();
+void ParserLeonbets::parseLeague(int id, const QWebElement &v) {
+    if (v.tagName().toLower() == "tr" && (v.hasClass("row1") || v.hasClass("row2"))) {
+        QWebElement vnx = v.nextSibling();
+        if (vnx.tagName().toLower() == "tr")
+            collect.addLine(Leagues::Line(v, vnx));
+        else
+            collect.addLine(Leagues::Line(v));
+        return;
+    }
+
+    QWebElement element = v.firstChild();
     while (!element.isNull()) {
-        if (element.tagName().toLower() == "tr") {
-            if (element.hasClass("row1") || element.hasClass("row2")) {
-                int t = extractTime(element) + 4 * 3600;
-                //if (t <= timeMatch)
-                collect.addLine(t, extractFirstTeam(element), extractSecondTeam(element),
-                                extractWin1(element), extractDraw(element), extractWin2(element));
-            }
-        }
-        examineChildElements(id, element);
+        parseLeague(id, element);
         element = element.nextSibling();
     }
 }
@@ -154,7 +109,7 @@ void ParserLeonbets::slotLoadLeaguePageFinished(bool status) {
     }
     cout << "succ leag " << numberOfLink + 1 << endl;
     collect.addLeague(links[numberOfLink].first);
-    examineChildElements(collect.size() - 1, league->mainFrame()->documentElement());
+    parseLeague(collect.size() - 1, league->mainFrame()->documentElement());
 
     QFile file("leonbets.xml");
     if (file.open(QIODevice::WriteOnly)) {
