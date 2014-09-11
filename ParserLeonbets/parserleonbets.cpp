@@ -6,7 +6,7 @@
 #include <QFile>
 #include <QTimer>
 #include "leagues.h"
-
+#include "loader.h"
 //namespace LineExtracters {
 
 ParserLeonbets::ParserLeonbets():
@@ -98,18 +98,38 @@ void ParserLeonbets::slotLoadMainPageFinished(bool status) {
     league = new QWebPage();
     lockAttributs(*league);
     numberOfLink = 0;
-    connect(league, SIGNAL(loadFinished(bool)), this, SLOT(slotLoadLeaguePageFinished(bool)), Qt::DirectConnection);
-    league->mainFrame()->load(links[0].second);
+    //connect(league, SIGNAL(loadFinished(bool)), this, SLOT(slotLoadLeaguePageFinished(bool)), Qt::DirectConnection);
+    int THREADS = 2;
+    int part = (links.size() + THREADS - 1) / THREADS;
+    qRegisterMetaType<QWebElement>("QWebElement");
+    for (int i = 0; i < THREADS; ++i) {
+        QVector <pair <QString, QString> > cp;
+        for (int j = part * i; j < min((int)links.size(), part * (i + 1)); ++j)
+            cp.push_back(links[j]);
+        Loader *ld = new Loader(cp);
+        //connect(ld, SIGNAL(finishedThreadLoad(QString, QWebElement, bool)),
+                //this, SLOT(slotLoadLeaguePageFinished(QString, QWebElement, bool)), Qt::QueuedConnection);
+        //league->mainFrame()->load(links[0].second);
+        connect(ld, SIGNAL(finished()), SLOT(finishedThread()));
+        ld->start();
+    }
 }
 
-void ParserLeonbets::slotLoadLeaguePageFinished(bool status) {
+void ParserLeonbets::finishedThread() {
+    qDebug() << "finish thread";
+    Loader* ld = (Loader*)sender();
+    for (int i = 0; i < ld->links.size(); ++i)
+        slotLoadLeaguePageFinished(ld->links[i].second, ld->loaders[i]->mainFrame()->documentElement(), true);
+}
+
+void ParserLeonbets::slotLoadLeaguePageFinished(QString curlgName, QWebElement lg, bool status) {
     if (!status) {
         qDebug() << "error load league page" << endl;
         return;
     }
     cout << "succ leag " << numberOfLink + 1 << endl;
-    collect.addLeague(links[numberOfLink].first);
-    parseLeague(collect.size() - 1, league->mainFrame()->documentElement());
+    collect.addLeague(curlgName);
+    parseLeague(collect.size() - 1, lg);
 
     QFile file("leonbets.xml");
     if (file.open(QIODevice::WriteOnly)) {
@@ -117,10 +137,7 @@ void ParserLeonbets::slotLoadLeaguePageFinished(bool status) {
         file.close();
     }
     ++numberOfLink;
-    if (numberOfLink < links.size())
-        league->mainFrame()->load(links[numberOfLink].second);
-    else {
-        cout << "time of work = " << (clock() - startParse) / 100000.0 << " sec.\n";
-        exit(0);
+    if (numberOfLink == links.size()) {
+        qDebug() << (clock() - startParse) / 100000.0;
     }
 }

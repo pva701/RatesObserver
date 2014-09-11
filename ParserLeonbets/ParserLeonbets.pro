@@ -12,10 +12,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     parserleonbets.cpp \
-    leagues.cpp
+    leagues.cpp \
+    loader.cpp
 
 HEADERS  += \
     parserleonbets.h \
-    leagues.h
+    leagues.h \
+    loader.h
 
 FORMS    +=

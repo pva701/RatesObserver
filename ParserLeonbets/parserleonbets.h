@@ -36,7 +36,8 @@ public:
 private slots:
     void slotLoadMainPageFinished(bool status);
     void printProgress(int percent);
-    void slotLoadLeaguePageFinished(bool);
+    void slotLoadLeaguePageFinished(QString, QWebElement, bool);
+    void finishedThread();
 };
 
 #endif // PARSERLEONBETS_H
