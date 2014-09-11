@@ -4,5 +4,5 @@
 public class Match {
     public String time;
     public String team1, team2;
-    public String win1, win2, draw, win1win2, win1draw, win2draw;
+    public String win1, win2, draw, win1win2, win1draw, win2draw, total, m, b;
 }

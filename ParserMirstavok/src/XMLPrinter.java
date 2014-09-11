@@ -37,12 +37,13 @@ public class XMLPrinter {
         mainDoc.appendChild(leagues);
     }
 
-    public void addElement(Element el, String name, String text) {
+    public Element addElement(Element el, String name, String text) {
         if (text.equals("ud"))
-            return;
+            return null;
         Element newEl = mainDoc.createElement(name);
         newEl.setTextContent(text);
         el.appendChild(newEl);
+        return newEl;
     }
 
     private Long makeDate(String time) {
@@ -56,7 +57,7 @@ public class XMLPrinter {
         int day = Integer.parseInt(dmy[0]);
         int hours = Integer.parseInt(hm[0]);
         int minutes = Integer.parseInt(hm[1]);
-        ans = Date.UTC(2000 + year - 1900, month, day, hours, minutes, 0);
+        ans = Date.UTC(2000 + year - 1900, month - 1, day, hours, minutes, 0);
         return ans / 1000;
     }
     public void addLeague(String leagueName, Match[] league) {
@@ -78,6 +79,14 @@ public class XMLPrinter {
             addElement(newMatch, "win1win2", league[i].win1win2);
             addElement(newMatch, "win2draw", league[i].win2draw);
 
+            Element total = mainDoc.createElement("table");
+            Element item = mainDoc.createElement("item");
+            item.setAttribute("tot", league[i].total);
+            item.setAttribute("under", league[i].m);
+            item.setAttribute("over", league[i].b);
+            
+            total.appendChild(item);
+            newMatch.appendChild(total);
             newLeague.appendChild(newMatch);
         }
         mainDoc.getDocumentElement().appendChild(newLeague);

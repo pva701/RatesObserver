@@ -114,8 +114,8 @@ public class Parser extends Application {
         String[] tmp = doc.getElementsByTagName("STRONG").item(0).getTextContent().split(" - ");
         res.team1 = tmp[0];
         res.team2 = tmp[1];
-        String[] k = new String[6];
-        for (int i = 5, c = 0; c < 6 && i < doc.getFirstChild().getChildNodes().getLength(); i += 2, c++) {
+        String[] k = new String[13];
+        for (int i = 5, c = 0; c < 13 && i < doc.getFirstChild().getChildNodes().getLength(); i += 2, c++) {
             k[c] = doc.getFirstChild().getChildNodes().item(i).getTextContent().trim();
             if (k[c].charAt(0) == (char)160)
                 k[c] = "ud";
@@ -126,6 +126,9 @@ public class Parser extends Application {
         res.win1draw = k[3];
         res.win1win2 = k[4];
         res.win2draw = k[5];
+        res.total = k[10];
+        res.m = k[11];
+        res.b = k[12];
         return res;
     }
 
